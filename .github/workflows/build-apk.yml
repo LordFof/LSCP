@@ -40,54 +40,10 @@ jobs:
         run: |
           rm -rf buildsrc
           mkdir buildsrc
-          unzip -o LSCP_build_package.zip -d buildsrc
-
-      - name: Fix source
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          # Fix MainActivity padding syntax
-          p = Path("buildsrc/app/src/main/java/cz/ls170/colormatcher/MainActivity.kt")
-          s = p.read_text()
-
-          s = s.replace(
-              "orientation=LinearLayout.VERTICAL;padding=24",
-              "orientation=LinearLayout.VERTICAL;setPadding(24,24,24,24)"
-          )
-
-          s = s.replace(
-              "textSize=28f;padding=16",
-              "textSize=28f;setPadding(16,16,16,16)"
-          )
-
-          p.write_text(s)
-
-          # Fix Java/Kotlin JVM target mismatch.
-          # The project currently compiles Java for 1.8 while Kotlin uses 17.
-          # Force Kotlin to target Java 8 so both tasks use the same target.
-          gradle_file = Path("buildsrc/app/build.gradle.kts")
-          g = gradle_file.read_text()
-
-          if "kotlinOptions" not in g:
-              marker = "android {"
-              if marker in g:
-                  g = g.replace(
-                      marker,
-                      '''android {
-              kotlinOptions {
-                  jvmTarget = "1.8"
-              }''',
-                      1
-                  )
-
-          gradle_file.write_text(g)
-
-          print("Source fixes applied")
-          PY
+          unzip -o LS170ColorMatcher_COMPLETE_clean.zip -d buildsrc
 
       - name: Build APK
-        working-directory: buildsrc
+        working-directory: buildsrc/lscp
         run: |
           gradle :app:assembleDebug --stacktrace
 
@@ -95,4 +51,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: LS170ColorMatcher-debug
-          path: buildsrc/app/build/outputs/apk/debug/app-debug.apk
+          path: buildsrc/lscp/app/build/outputs/apk/debug/app-debug.apk

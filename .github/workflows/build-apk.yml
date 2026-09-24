@@ -1,4 +1,4 @@
-name: Build APK
+name: Build MCBP APK
 
 on:
   workflow_dispatch:
@@ -47,8 +47,13 @@ jobs:
         run: |
           gradle :app:assembleDebug --stacktrace
 
+      - name: Rename APK
+        run: |
+          mv buildsrc/lscp/app/build/outputs/apk/debug/app-debug.apk \
+             buildsrc/lscp/app/build/outputs/apk/debug/MCBP.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: LS170ColorMatcher-debug
-          path: buildsrc/lscp/app/build/outputs/apk/debug/app-debug.apk
+          name: MCBP
+          path: buildsrc/lscp/app/build/outputs/apk/debug/MCBP.apk

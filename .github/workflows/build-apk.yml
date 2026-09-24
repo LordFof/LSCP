@@ -47,6 +47,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
+          # Fix MainActivity padding syntax
           p = Path("buildsrc/app/src/main/java/cz/ls170/colormatcher/MainActivity.kt")
           s = p.read_text()
 
@@ -61,7 +62,28 @@ jobs:
           )
 
           p.write_text(s)
-          print("MainActivity.kt fixed")
+
+          # Fix Java/Kotlin JVM target mismatch.
+          # The project currently compiles Java for 1.8 while Kotlin uses 17.
+          # Force Kotlin to target Java 8 so both tasks use the same target.
+          gradle_file = Path("buildsrc/app/build.gradle.kts")
+          g = gradle_file.read_text()
+
+          if "kotlinOptions" not in g:
+              marker = "android {"
+              if marker in g:
+                  g = g.replace(
+                      marker,
+                      '''android {
+              kotlinOptions {
+                  jvmTarget = "1.8"
+              }''',
+                      1
+                  )
+
+          gradle_file.write_text(g)
+
+          print("Source fixes applied")
           PY
 
       - name: Build APK

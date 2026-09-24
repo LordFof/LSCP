@@ -27,7 +27,25 @@ jobs:
         run: |
           mkdir buildsrc
           unzip LSCP_build_package.zip -d buildsrc
-
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("buildsrc/app/build.gradle.kts")
+          s = p.read_text()
+          s = s.replace(
+              "android {\n",
+              """android {
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          """,
+              1
+          )
+          p.write_text(s)
+          PY
       - name: Build APK
         working-directory: buildsrc
         run: gradle assembleDebug

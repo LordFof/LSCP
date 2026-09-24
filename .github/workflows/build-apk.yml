@@ -40,7 +40,7 @@ jobs:
         run: |
           rm -rf buildsrc
           mkdir buildsrc
-          unzip -o LS170ColorMatcher_COMPLETE_clean.zip -d buildsrc
+          unzip -o MCBP_modified_project.zip -d buildsrc
 
       - name: Build APK
         working-directory: buildsrc/lscp

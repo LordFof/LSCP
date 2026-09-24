@@ -23,27 +23,27 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Unpack project
+            - name: Unpack project
         run: |
           mkdir buildsrc
           unzip LSCP_build_package.zip -d buildsrc
+
           python3 - <<'PY'
           from pathlib import Path
-          p = Path("buildsrc/app/build.gradle.kts")
+
+          p = Path("buildsrc/app/src/main/java/cz/ls170/colormatcher/MainActivity.kt")
           s = p.read_text()
+
           s = s.replace(
-              "android {\n",
-              """android {
-              compileOptions {
-                  sourceCompatibility = JavaVersion.VERSION_17
-                  targetCompatibility = JavaVersion.VERSION_17
-              }
-              kotlinOptions {
-                  jvmTarget = "17"
-              }
-          """,
-              1
+              "orientation=LinearLayout.VERTICAL;padding=24",
+              "orientation=LinearLayout.VERTICAL;setPadding(24,24,24,24)"
           )
+
+          s = s.replace(
+              "textSize=28f;padding=16",
+              "textSize=28f;setPadding(16,16,16,16)"
+          )
+
           p.write_text(s)
           PY
       - name: Build APK

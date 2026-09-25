@@ -43,17 +43,17 @@ jobs:
           unzip -o MCBP_modified_project.zip -d buildsrc
 
       - name: Build APK
-        working-directory: buildsrc/lscp
+        working-directory: buildsrc
         run: |
           gradle :app:assembleDebug --stacktrace
 
       - name: Rename APK
         run: |
-          mv buildsrc/lscp/app/build/outputs/apk/debug/app-debug.apk \
-             buildsrc/lscp/app/build/outputs/apk/debug/MCBP.apk
+          mv buildsrc/app/build/outputs/apk/debug/app-debug.apk \
+             buildsrc/app/build/outputs/apk/debug/MCBP.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MCBP
-          path: buildsrc/lscp/app/build/outputs/apk/debug/MCBP.apk
+          path: buildsrc/app/build/outputs/apk/debug/MCBP.apk
